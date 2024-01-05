@@ -1,49 +1,40 @@
 import { useEffect, useState } from 'react'
-import { SafeAreaView, View, Text, StyleSheet, FlatList } from 'react-native'
+import {
+  SafeAreaView,
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  Alert
+} from 'react-native'
 import { px, colors } from '../../theme'
 import { USERNAME_DB_KEY } from '../../services/constants'
 import { getData } from '../../services/db'
 import { ListCard, Button } from '../../components'
-
-const fakeList = [
-  {
-    id: 0,
-    name: 'Arroz',
-    quantity: 2,
-    checked: true
-  },
-  {
-    id: 1,
-    name: 'Feijão',
-    quantity: 3,
-    checked: true
-  },
-  {
-    id: 2,
-    name: 'Macarrão',
-    quantity: 5,
-    checked: false
-  },
-  {
-    id: 3,
-    name: 'Farinha',
-    quantity: 6,
-    checked: false
-  }
-]
+import { getItems } from '../../services/api/requests'
 
 export const MarketListScreen = () => {
   const [username, setUsername] = useState('')
+  const [marketList, setMarketList] = useState([])
 
-  const returnUsername = async () => {
+  const getUsernameList = async () => {
     const result = await getData(USERNAME_DB_KEY)
-    if (!result?.error) {
-      setUsername(result)
+    if (result?.error) {
+      Alert.alert('Falha ao retornar username')
+      return
     }
+
+    setUsername(result)
+    const list = await getItems()
+    if (list?.error) {
+      Alert.alert('Falha ao retornar a lista')
+      return
+    }
+    setMarketList(list)
   }
 
   useEffect(() => {
-    returnUsername()
+    getUsernameList()
   }, [])
 
   return (
@@ -53,9 +44,9 @@ export const MarketListScreen = () => {
         <Text style={styles.description}> Sua Lista de compras: </Text>
       </View>
       <FlatList
-        data={fakeList}
+        data={marketList}
         renderItem={({ item }) => <ListCard {...item} />}
-        keyExtractor={item => item.id}
+        keyExtractor={item => item._id}
       />
       <View style={styles.buttonView}>
         <Button>Adicionar novo item</Button>
