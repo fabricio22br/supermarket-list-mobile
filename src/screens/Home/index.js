@@ -6,8 +6,9 @@ import { Input } from '../../components/Input'
 import homeImage from '../../../assets/shopping-bag.png'
 import { USERNAME_DB_KEY } from '../../services/constants'
 import { saveData } from '../../services/db'
+import { px } from '../../theme'
 
-export const HomeScreen = () => {
+export const HomeScreen = ({ navigation }) => {
   const [username, setUsername] = useState('')
 
   const onClickContinue = async () => {
@@ -16,10 +17,14 @@ export const HomeScreen = () => {
       return
     }
 
+    // salvar o username
     const result = await saveData(USERNAME_DB_KEY, username)
     if (result?.error) {
       Alert.alert('Erro ao salvar o username')
     }
+
+    // navegar para a proxima pagina
+    navigation.navigate('MarketList')
   }
 
   return (
@@ -41,7 +46,9 @@ export const HomeScreen = () => {
         placeholder="Ex: fabricioteste"
         autoCapitalize="none"
       />
-      <Button onClick={onClickContinue} marginTop={14} text="Continuar" />
+      <Button onClick={onClickContinue} marginTop={14}>
+        Continuar
+      </Button>
       <StatusBar style="auto" />
     </View>
   )
@@ -52,27 +59,27 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 16
+    padding: px(16)
   },
   homeImage: {
-    height: 200,
-    width: 200
+    height: px(200),
+    width: px(200)
   },
   title: {
-    fontSize: 24,
+    fontSize: px(24),
     fontWeight: 'bold',
     textAlign: 'center',
-    marginTop: 16
+    marginTop: px(16)
   },
   subtitle: {
-    fontSize: 16,
+    fontSize: px(16),
     textAlign: 'center',
-    marginTop: 12
+    marginTop: px(12)
   },
   description: {
-    fontSize: 16,
+    fontSize: px(16),
     textAlign: 'left',
-    marginTop: 36,
-    marginBottom: 12
+    marginTop: px(36),
+    marginBottom: px(12)
   }
 })
