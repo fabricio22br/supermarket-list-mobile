@@ -10,14 +10,16 @@ import {
 import { px, colors } from '../../theme'
 import { USERNAME_DB_KEY } from '../../services/constants'
 import { getData } from '../../services/db'
-import { ListCard, Button } from '../../components'
+import { ListCard, Button, Loader } from '../../components'
 import { getItems } from '../../services/api/requests'
 
-export const MarketListScreen = () => {
+export const MarketListScreen = ({ navigation }) => {
+  const [loading, setLoading] = useState(true)
   const [username, setUsername] = useState('')
   const [marketList, setMarketList] = useState([])
 
   const getUsernameList = async () => {
+    setLoading(true)
     const result = await getData(USERNAME_DB_KEY)
     if (result?.error) {
       Alert.alert('Falha ao retornar username')
@@ -31,6 +33,11 @@ export const MarketListScreen = () => {
       return
     }
     setMarketList(list)
+    setLoading(false)
+  }
+
+  const onClickChangeUsername = () => {
+    navigation.goBack()
   }
 
   useEffect(() => {
@@ -40,13 +47,27 @@ export const MarketListScreen = () => {
   return (
     <SafeAreaView style={styles.safeAreaContainer}>
       <View style={styles.headerContainer}>
-        <Text style={styles.title}>ola, {username}!</Text>
+        <Text style={styles.title}>Olá, {username}!</Text>
         <Text style={styles.description}> Sua Lista de compras: </Text>
       </View>
+      {loading && <Loader />}
       <FlatList
         data={marketList}
         renderItem={({ item }) => <ListCard {...item} />}
         keyExtractor={item => item._id}
+        ListEmptyComponent={() => (
+          <View style={styles.emptyContainer}>
+            <Text style={styles.emptyTitle}>Sua lista está Vazia.</Text>
+            <Button
+              onClick={onClickChangeUsername}
+              marginTop={24}
+              size="small"
+              variant="outline"
+            >
+              Trocar de Úsuario.
+            </Button>
+          </View>
+        )}
       />
       <View style={styles.buttonView}>
         <Button>Adicionar novo item</Button>
@@ -85,5 +106,16 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     position: 'absolute',
     bottom: px(64)
+  },
+  emptyContainer: {
+    height: px(450),
+    width: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  emptyTitle: {
+    fontSize: px(18),
+    fontWeight: '500'
   }
 })
