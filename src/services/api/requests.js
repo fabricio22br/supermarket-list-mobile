@@ -41,3 +41,17 @@ export const updateItem = async (id, body) => {
     return { error }
   }
 }
+
+export const deleteItem = async id => {
+  try {
+    const username = await returnUsername()
+    const result = await api.delete(`/list-item/${id}`, {
+      headers: {
+        username
+      }
+    })
+    return result.data
+  } catch (error) {
+    return { error }
+  }
+}

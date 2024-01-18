@@ -11,7 +11,7 @@ import { px, colors } from '../../theme'
 import { USERNAME_DB_KEY } from '../../services/constants'
 import { getData } from '../../services/db'
 import { ListCard, Button, Loader, FormModal } from '../../components'
-import { getItems } from '../../services/api/requests'
+import { getItems, updateItem } from '../../services/api/requests'
 
 export const MarketListScreen = ({ navigation }) => {
   const [selectedItem, setSelectedItem] = useState()
@@ -58,6 +58,19 @@ export const MarketListScreen = ({ navigation }) => {
     setModalVisible(false)
   }
 
+  const onCheckItem = async item => {
+    const result = await updateItem(item._id, {
+      ...item,
+      checked: !item.checked
+    })
+    if (result?.error) {
+      Alert.alert('Falha ao atualizar item.', 'Por Favor tente novamente')
+      return
+    }
+
+    getUsernameList()
+  }
+
   return (
     <SafeAreaView style={styles.safeAreaContainer}>
       <View style={styles.headerContainer}>
@@ -70,7 +83,11 @@ export const MarketListScreen = ({ navigation }) => {
         contentContainerStyle={styles.flatListContentContainer}
         data={marketList}
         renderItem={({ item }) => (
-          <ListCard onClickItem={() => onClickItem(item)} {...item} />
+          <ListCard
+            onCheckItem={() => onCheckItem(item)}
+            onClickItem={() => onClickItem(item)}
+            {...item}
+          />
         )}
         keyExtractor={item => item._id}
         ListEmptyComponent={() =>

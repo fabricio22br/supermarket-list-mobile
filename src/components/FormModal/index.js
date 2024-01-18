@@ -11,7 +11,7 @@ import { EvilIcons } from '@expo/vector-icons'
 import { Button } from '../Button'
 import { Input } from '../Input'
 import { colors, px } from '../../theme'
-import { addItem, updateItem } from '../../services/api/requests'
+import { addItem, updateItem, deleteItem } from '../../services/api/requests'
 
 export const FormModal = ({ visible, onClose, selectedItem }) => {
   const [name, setName] = useState('')
@@ -31,7 +31,16 @@ export const FormModal = ({ visible, onClose, selectedItem }) => {
     setQuantity(quantity - 1)
   }
 
-  onSave = async () => {
+  const onDelete = async () => {
+    const result = await deleteItem(selectedItem?._id)
+    if (result?.error) {
+      Alert.alert('Error ao excluir item', 'por favor, tente novamente')
+      return
+    }
+    closeModal()
+  }
+
+  const onSave = async () => {
     if (name.length <= 3) {
       Alert.alert('Nome do item deve conter mais de 3 caracteres')
       return
@@ -116,7 +125,17 @@ export const FormModal = ({ visible, onClose, selectedItem }) => {
           <Button marginTop={px(24)} onClick={onSave}>
             {selectedItem ? 'Atualizar' : 'Adicionar'}
           </Button>
-          <Button marginTop={px(12)} variant="outline" onClick={onClose}>
+          {selectedItem && (
+            <Button
+              onClick={onDelete}
+              marginTop={px(16)}
+              variant="outline"
+              icon="trash"
+            >
+              Excluir item
+            </Button>
+          )}
+          <Button marginTop={px(16)} variant="ghost" onClick={onClose}>
             Cancelar
           </Button>
         </View>
@@ -139,7 +158,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'flex-start',
-    height: px(448),
+    height: px(502),
     width: '100%',
     backgroundColor: colors.white,
     borderTopLeftRadius: px(16),
