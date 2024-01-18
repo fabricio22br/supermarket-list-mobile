@@ -2,21 +2,21 @@
 
 This is an mobile app created with React Native (Expo). At the app the user can create, Delete and update list items.
 
-# Technologies used
+## Technologies used
 
 - React native (Expo)
 - Axios
 - Expo Icons
 - React Navigation
 
-# Requirements
+## Requirements
 
 - React Native setup (https://reactnative.dev/docs/environment-setup)
 - Node.js (https://nodejs.org/en)
 - Xcode (optional)
 - Android Studio
 
-# Steps to Run the project:
+## Steps to Run the project:
 
 1. Clone the project:
 
